@@ -8,16 +8,16 @@ import EditExercise from "./components/edit-exercise.component";
 import CreateExercise from "./components/create-exercise.component";
 import CreateUser from "./components/create-user.component";
 
-function App() {
+function App () {
   return (
     <Router>
       <div className="container">
-      <Navbar />
-      <br/>
-      <Route path="/" exact component={ExercisesList} />
-      <Route path="/edit/:id" component={EditExercise} />
-      <Route path="/create" component={CreateExercise} />
-      <Route path="/user" component={CreateUser} />
+        <Navbar />
+        <br />
+        <Route path="/" exact component={ExercisesList} />
+        <Route path="/edit/:id" component={EditExercise} />
+        <Route path="/create" component={CreateExercise} />
+        <Route path="/user" component={CreateUser} />
       </div>
     </Router>
   );
