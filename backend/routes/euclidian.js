@@ -2,7 +2,7 @@ const router = require('express').Router();
 let generator = require('../controllers/generator');
 
 router.route('/').get((req, res) => {
-  generator.getEuclidian()
+  generator.getAllUsersSimilarity()
     .then(users => {
 
       for (let i = 0; i < users.length; i++) {

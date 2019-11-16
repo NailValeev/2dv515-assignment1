@@ -7,8 +7,9 @@ const ratings = './datasets/ratings.csv';
 const movies = './datasets/movies.csv';
 
 
-var myPerson = function (id) {
+var myUser = function (id, name) {
   this.id = id;
+  this.name = name;
   this.ratings = [];
 };
 
@@ -40,7 +41,11 @@ function parseRaitings() {
   })();
 };
 
-exports.getData = () => {
+exports.parseUsers = parseUsers();
+exports.parseMovies = parseMovies();
+exports.parseRaitings = parseRaitings();
+
+exports.getUsersData = () => {
   return (async () => {
     let users = await parseUsers();
     let movies = await parseMovies();
@@ -52,20 +57,18 @@ exports.getData = () => {
       films[title] = new myFilm(movies[i].MovieId, movies[i].Year);
     }
 
-    let persons = {};
+    let persons = [];
     for (let i = 0; i < users.length; i++) {
-      let name = users[i].Name;
-      persons[name] = new myPerson(users[i].UserId);
+      persons[i] = new myUser(users[i].UserId, users[i].Name);
 
-      let person = persons[name];
-      for (let i = 0; i < ratings.length; i++) {
+      for (let k = 0; k < ratings.length; k++) {
 
-        if (person.id === ratings[i].UserId) {
-          person.ratings.push(new myRating(ratings[i].MovieId, ratings[i].Rating))
+        if (persons[i].id === ratings[k].UserId) {
+          persons[i].ratings.push(new myRating(ratings[i].MovieId, ratings[i].Rating))
         }
       }
     }
 
-    return JSON.stringify(persons);
+    return persons;
   })();
 };
