@@ -64,7 +64,7 @@ exports.getUsersData = () => {
       for (let k = 0; k < ratings.length; k++) {
 
         if (persons[i].id === ratings[k].UserId) {
-          persons[i].ratings.push(new myRating(ratings[i].MovieId, ratings[i].Rating))
+          persons[i].ratings.push(new myRating(ratings[k].MovieId, ratings[k].Rating))
         }
       }
     }
