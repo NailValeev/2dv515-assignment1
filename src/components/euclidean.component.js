@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-export default class Euclidian extends Component {
+export default class Euclidean extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -27,7 +27,7 @@ export default class Euclidian extends Component {
   render () {
     return (
       <div>
-        <h3>Euclidian</h3>
+        <h3>Euclidean</h3>
         <div> 
           <span>"Foo"</span>
         </div>

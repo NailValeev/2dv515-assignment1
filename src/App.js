@@ -7,7 +7,7 @@ import ExercisesList from "./components/exercises-list.component";
 import EditExercise from "./components/edit-exercise.component";
 import CreateExercise from "./components/create-exercise.component";
 import CreateUser from "./components/create-user.component";
-import Euclidian from "./components/euclidian.component";
+import Euclidean from "./components/euclidean.component";
 
 function App () {
   return (
@@ -19,7 +19,7 @@ function App () {
         <Route path="/edit/:id" component={EditExercise} />
         <Route path="/create" component={CreateExercise} />
         <Route path="/user" component={CreateUser} />
-        <Route path="/euclidian" component={Euclidian} />
+        <Route path="/euclidean" component={Euclidean} />
       </div>
     </Router>
   );

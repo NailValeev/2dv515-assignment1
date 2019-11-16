@@ -22,11 +22,13 @@ db.on('disconnected', () => console.log('Mongoose connection is disconnected.'))
 */
 const exercisesRouter = require('./routes/exercises');
 const usersRouter = require('./routes/users');
-const euclidianRouter = require('./routes/euclidian');
+const euclideanRouter = require('./routes/euclidean');
+const pearsonRouter = require('./routes/pearson');
 
 app.use('/exercises', exercisesRouter);
 app.use('/users', usersRouter);
-app.use('/euclidian', euclidianRouter);
+app.use('/euclidean', euclideanRouter);
+app.use('/pearson', pearsonRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
