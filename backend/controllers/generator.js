@@ -214,7 +214,55 @@ function getAllUsersSimilarityAndRecommendationsEuclidean () {
     return dataSet;
   })()
 }
+/**
+ *  @function
+ *  Enrich with recommendations existing data set that contains similarity
+ *
+ *  @returns Promise with all similarities for users calculated by Pearson similarity
+ */
+function getAllUsersSimilarityAndRecommendationsPearson () {
+  return (async () => {
+    let movies = await parser.parseMovies;
+    let ratings = await parser.getRaitings();
+
+    let dataSet = await getAllUsersSimilarityPearson();
+    for (let s = 0; s < dataSet.length; s++ ) {
+      let similarities = dataSet[s].similarUsers;
+
+      // set all movies with initial rating 0
+      for (let m = 0; m < movies.length; m++) {
+        let movieId = movies[m].MovieId;
+        let movie = new MyMovie(movieId, movies[m].Title, movies[m].Year);
+
+        let movieScoreSum = 0;
+        let similarityNumber = 0;
+
+        for (let i = 0; i < similarities.length; i++ ) {
+          let similarityScore = similarities[i].score;       
+          if (similarityScore <= 0) continue;
+
+          let userId = similarities[i].resultId;
+
+          if (userHasRatingForMovie(userId, movieId, ratings)) {
+            similarityNumber += similarityScore;
+            movieScoreSum += similarityScore * getMovieRatingByIdAndUSerId(userId, movieId, ratings);
+          }
+        }
+
+        if (similarityNumber === 0) {
+          movie.movieRating = 0
+        } else {
+          movie.movieRating = movieScoreSum / similarityNumber;
+        }
+
+        dataSet[s].recommendations.push(movie); // TODO sort
+      } // movie set for user generated
+    }
+    return dataSet;
+  })()
+}
 
 exports.getAllUsersSimilarityEuclidean = getAllUsersSimilarityEuclidean();
 exports.getAllUsersSimilarityPearson = getAllUsersSimilarityPearson();
 exports.getAllUsersSimilarityAndRecommendationsEuclidean = getAllUsersSimilarityAndRecommendationsEuclidean();
+exports.getAllUsersSimilarityAndRecommendationsPearson = getAllUsersSimilarityAndRecommendationsPearson();
