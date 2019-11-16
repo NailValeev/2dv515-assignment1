@@ -39,7 +39,13 @@ function parseRaitings () {
 
 exports.parseUsers = parseUsers();
 exports.parseMovies = parseMovies();
-exports.parseRaitings = parseRaitings();
+
+exports.getRaitings = () => {
+  return (async () => {
+    let ratings = await parseRaitings();
+    return ratings;
+  })()
+}
 
 /**
  *  @function

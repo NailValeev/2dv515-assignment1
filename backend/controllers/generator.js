@@ -4,14 +4,22 @@ let parser = require('./parser');
 
 // object declaration
 var MyInfoHolder = function (id, name) {
+  this.id = id;
   this.uid = id + ': ' + name;
-  this.similarUsers = []; // TODO sort descend
+  this.similarUsers = [];
+  this.recommendations = [];
 }
 
 function MyResult (resultName, resultId, score) {
   this.resultName = resultName;
   this.resultId = resultId;
   this.score = score;
+}
+
+var MyMovie = function (movieId, title, year ) {
+  this.movieId = movieId;
+  this.description = title + " (" + year + ")";
+  this.movieRating = 0; // Initial, set it later
 }
 
 // helper function
@@ -40,9 +48,8 @@ function calculateSimilarityEuclidean (userA, userB) {
  *
  *  @returns Promise with all similarities for users calculated by Euclidean distance
  */
-exports.getAllUsersSimilarityEuclidean = () => {
+function getAllUsersSimilarityEuclidean () {
   return (async () => {
-
     let data = await parser.getUsersData();
 
     if (!data) return null;
@@ -111,9 +118,8 @@ function calculateSimilarityPearson (userA, userB) {
  *
  *  @returns Promise with all similarities for users calculated by Euclidean distance
  */
-exports.getAllUsersSimilarityPearson = () => {
+function getAllUsersSimilarityPearson () {
   return (async () => {
-
     let data = await parser.getUsersData();
 
     if (!data) return null;
@@ -140,3 +146,75 @@ exports.getAllUsersSimilarityPearson = () => {
     return result;
   })()
 }
+
+// helper functions
+function getMovieRatingByIdAndUSerId (userId, movieId, ratingSet) {
+  let rating = 0;
+  for (let i = 0; i < ratingSet.length; i++ ) {
+    if (movieId === ratingSet[i].MovieId && userId === ratingSet[i].UserId) {
+      rating = ratingSet[i].Rating;
+    }
+  }
+  return rating;
+}
+
+function userHasRatingForMovie (userId, movieId, ratingSet) {
+  for (let i = 0; i < ratingSet.length; i++ ) {
+    if (movieId === ratingSet[i].MovieId && userId === ratingSet[i].UserId) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ *  @function
+ *  Enrich with recommendations existing data set that contains similarity
+ *
+ *  @returns Promise with all similarities for users calculated by Euclidean distance
+ */
+function getAllUsersSimilarityAndRecommendationsEuclidean () {
+  return (async () => {
+    let movies = await parser.parseMovies;
+    let ratings = await parser.getRaitings();
+
+    let dataSet = await getAllUsersSimilarityEuclidean();
+    for (let s = 0; s < dataSet.length; s++ ) {
+      let similarities = dataSet[s].similarUsers;
+
+      // set all movies with initial rating 0
+      for (let m = 0; m < movies.length; m++) {
+        let movieId = movies[m].MovieId;
+        let movie = new MyMovie(movieId, movies[m].Title, movies[m].Year);
+
+        let movieScoreSum = 0;
+        let similarityNumber = 0;
+
+        for (let i = 0; i < similarities.length; i++ ) {
+          let similarityScore = similarities[i].score;       
+          if (similarityScore <= 0) continue;
+
+          let userId = similarities[i].resultId;
+
+          if (userHasRatingForMovie(userId, movieId, ratings)) {
+            similarityNumber += similarityScore;
+            movieScoreSum += similarityScore * getMovieRatingByIdAndUSerId(userId, movieId, ratings);
+          }
+        }
+
+        if (similarityNumber === 0) {
+          movie.movieRating = 0
+        } else {
+          movie.movieRating = movieScoreSum / similarityNumber;
+        }
+
+        dataSet[s].recommendations.push(movie); // TODO sort
+      } // movie set for user generated
+    }
+    return dataSet;
+  })()
+}
+
+exports.getAllUsersSimilarityEuclidean = getAllUsersSimilarityEuclidean();
+exports.getAllUsersSimilarityPearson = getAllUsersSimilarityPearson();
+exports.getAllUsersSimilarityAndRecommendationsEuclidean = getAllUsersSimilarityAndRecommendationsEuclidean();
