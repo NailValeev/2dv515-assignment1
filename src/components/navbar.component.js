@@ -9,11 +9,8 @@ export default class Navbar extends Component {
         <Link to="/" className="navbar-brand">Recommendation System</Link>
         <div className="collapse navbar-collapse">
           <ul className="navbar-nav mr-auto">
-            <li className="navbar-item"><Link to="/" className="nav-link">Exercises</Link></li>
-            <li className="navbar-item"><Link to="/euclidean" className="nav-link">Euclidean</Link></li>
+            <li className="navbar-item"><Link to="/euclidean" className="nav-link">Euclidean similarity</Link></li>
             <li className="navbar-item"><Link to="/pearson" className="nav-link">Pearson Correlation</Link></li>
-            <li className="navbar-item"><Link to="/create" className="nav-link">Create Exercise Log</Link></li>
-            <li className="navbar-item"><Link to="/user" className="nav-link">Create User</Link></li>
           </ul>
         </div>
       </nav>

@@ -100,7 +100,7 @@ export default class Euclidean extends Component {
   render () {
     return (
       <div>
-        <h3>Euclidean distance as similarity measure</h3>
+        <h3>Pearson Correlation as similarity measure</h3>
         <form className="form-inline">
           <div className="form-group col-lg-4 col-md-4 col-sm-12">
             <label>Username:&nbsp; </label>
