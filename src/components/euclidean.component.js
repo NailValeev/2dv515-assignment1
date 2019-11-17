@@ -5,7 +5,7 @@ const Item = props => (
   <tr>
     <td>{props.item.resultName}</td>
     <td>{props.item.resultId}</td>
-    <td>{props.item.score}</td>
+    <td>{props.item.score.toFixed(2)}</td>
   </tr>
 )
 
@@ -13,15 +13,25 @@ const Movie = props => (
   <tr>
     <td>{props.movie.description}</td>
     <td>{props.movie.movieId}</td>
-    <td>{props.movie.movieRating}</td>
+    <td>{props.movie.movieRating.toFixed(2)}</td>
   </tr>
 )
 
 export default class Euclidean extends Component {
   constructor (props) {
     super(props);
-    this.state = { items: [], selectedItem: [], selectedRecommendations: [], itemId: 0, isAllseen: false };
+    this.state = {
+      items: [],
+      selectedItem: [],
+      selectedRecommendations: [],
+      itemId: 0,
+      isAllseen: false,
+      simLimit: 3,
+      movLimit: 3
+    };
     this.onChangeUserId = this.onChangeUserId.bind(this);
+    this.onChangeSimLimit = this.onChangeSimLimit.bind(this);
+    this.onChangeMovLimit = this.onChangeMovLimit.bind(this);
   }
 
   componentDidMount () {
@@ -33,7 +43,9 @@ export default class Euclidean extends Component {
             items: response.data,
             selectedItem: response.data[this.state.itemId].similarUsers,
             selectedRecommendations: response.data[this.state.itemId].recommendations,
-            isAllseen: response.data[this.state.itemId].recommendations.length === 0
+            isAllseen: response.data[this.state.itemId].recommendations.length === 0,
+            simLimit: 3,
+            movLimit: 3
           })
         }
       })
@@ -52,18 +64,36 @@ export default class Euclidean extends Component {
     })
   }
 
-  itemList () {
-    return this.state.selectedItem.map(item => {
-      return <Item item={item} key={item.resultId} />;
+  onChangeSimLimit (e) {
+    this.setState({
+      ...this.state,
+      simLimit: e.target.value
     })
   }
 
+  onChangeMovLimit (e) {
+    this.setState({
+      ...this.state,
+      movLimit: e.target.value
+    })
+  }
+
+  itemList () {
+    return this.state.selectedItem.map((item, index) => {
+      if (index < this.state.simLimit) {
+        return <Item item={item} key={item.resultId} />;
+      }
+    })
+  }
+  
   movieList () {
     if (this.state.isAllseen) {
       return <tr><td>No recommendations, this user has seen all reviewed movies!</td></tr>
     };
-    return this.state.selectedRecommendations.map(movie => {
-      return <Movie movie={movie} key={movie.movieId} />;
+    return this.state.selectedRecommendations.map((movie, index) => {
+      if (index < this.state.movLimit) {
+        return <Movie movie={movie} key={movie.movieId} />;
+      }
     })
   }
 
@@ -71,10 +101,9 @@ export default class Euclidean extends Component {
     return (
       <div>
         <h3>Euclidean distance as similarity measure</h3>
-        <h5>Please, select a user to show similar users and recommendations.</h5>
-        <form>
-          <div className="form-group col-lg-4 col-md-6 col-sm-12"> 
-            <label>Username: </label>
+        <form className="form-inline">
+          <div className="form-group col-lg-4 col-md-4 col-sm-12">
+            <label>Username:&nbsp; </label>
             <select required className="form-control" value={this.state.userId} onChange={this.onChangeUserId}>
               {
                 this.state.items.map((item) => {
@@ -84,9 +113,25 @@ export default class Euclidean extends Component {
             </select>
           </div>
         </form>
-
+        <br />
         <h5>Similar users: {this.state.username}</h5>
-        <table className="table">
+        <form className="form-inline">
+          <div className="form-group col-lg-4 col-md-4 col-sm-12">
+            <label>Results:&nbsp;  </label>
+            <input
+              type="number"
+              required
+              min="1"
+              max={this.state.selectedItem.length}
+              className="form-control col-lg-3 col-md-3 col-sm-4"
+              value={this.state.simLimit}
+              onChange={this.onChangeSimLimit}
+            />
+          </div>
+        </form>
+        <br />
+
+        <table className="table col-lg-6 col-md-6 col-sm-12">
           <thead className="thead-light">
             <tr>
               <th>Name</th>
@@ -100,7 +145,22 @@ export default class Euclidean extends Component {
         </table>
 
         <h5>Recommended movies: {this.state.username}</h5>
-        <table className="table">
+        <form className="form-inline">
+          <div className="form-group col-lg-4 col-md-4 col-sm-12">
+            <label>Results:&nbsp;  </label>
+            <input
+              type="number"
+              required
+              min="0"
+              max={this.state.selectedRecommendations.length}
+              className="form-control col-lg-3 col-md-3 col-sm-4"
+              value={this.state.movLimit}
+              onChange={this.onChangeMovLimit}
+            />
+          </div>
+        </form>
+        <br />
+        <table className="table col-lg-6 col-md-6 col-sm-12">
           <thead className="thead-light">
             <tr>
               <th>Movie</th>
