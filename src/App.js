@@ -8,6 +8,7 @@ import EditExercise from "./components/edit-exercise.component";
 import CreateExercise from "./components/create-exercise.component";
 import CreateUser from "./components/create-user.component";
 import Euclidean from "./components/euclidean.component";
+import Pearson from "./components/pearson.component";
 
 function App () {
   return (
@@ -20,6 +21,7 @@ function App () {
         <Route path="/create" component={CreateExercise} />
         <Route path="/user" component={CreateUser} />
         <Route path="/euclidean" component={Euclidean} />
+        <Route path="/pearson" component={Pearson} />
       </div>
     </Router>
   );
