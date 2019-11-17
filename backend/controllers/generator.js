@@ -208,8 +208,12 @@ function getAllUsersSimilarityAndRecommendationsEuclidean () {
           movie.movieRating = movieScoreSum / similarityNumber;
         }
 
-        dataSet[s].recommendations.push(movie); // TODO sort
+        if (!userHasRatingForMovie(dataSet[s].id, movieId, ratings)) {
+          dataSet[s].recommendations.push(movie);
+        }
+
       } // movie set for user generated
+      dataSet[s].recommendations.sort(function (a, b) { return Number(b.movieRating) - Number(a.movieRating) });
     }
     return dataSet;
   })()
@@ -257,6 +261,7 @@ function getAllUsersSimilarityAndRecommendationsPearson () {
 
         dataSet[s].recommendations.push(movie); // TODO sort
       } // movie set for user generated
+      dataSet[s].recommendations.sort(function (a, b) { return Number(b.movieRating) - Number(a.movieRating) });
     }
     return dataSet;
   })()
